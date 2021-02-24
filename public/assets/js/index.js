@@ -9,7 +9,7 @@ if (window.location.pathname === '/notes') {
   noteText = document.querySelector('.note-textarea');
   saveNoteBtn = document.querySelector('.save-note');
   newNoteBtn = document.querySelector('.new-note');
-  noteList = document.querySelectorAll('.list-container .list-group');
+  noteList = document.querySelectorAll('.list-container .list-group');  
 }
 
 // Show an element
@@ -65,7 +65,20 @@ const renderActiveNote = () => {
 };
 
 const handleNoteSave = () => {
+  
+  // Gives note a Key Id value begining at 1 and incresing by 1 with each note saved //
+  noteListData = document.querySelectorAll('.list-group-item');
+  
+    if (noteListData[0].innerText === "Notes will be saved here") {
+      noteId = 1;
+    } else {
+      const noteIdNumber = JSON.parse(noteListData[noteListData.length - 1].getAttribute("data-note")).id;
+      noteId = noteIdNumber + 1;
+    }
+  
   const newNote = {
+    // Add Key ID to note //
+    id: noteId,
     title: noteTitle.value,
     text: noteText.value,
   };
@@ -82,7 +95,9 @@ const handleNoteDelete = (e) => {
 
   const note = e.target;
   const noteId = JSON.parse(note.parentElement.getAttribute('data-note')).id;
-
+  console.log(`note=${note}`);
+  console.log(`activenoteid=${activeNote.id}`);
+  console.log(`delete Note, noteId=${noteId}`);
   if (activeNote.id === noteId) {
     activeNote = {};
   }
@@ -152,7 +167,7 @@ const renderNoteList = async (notes) => {
   };
 
   if (jsonNotes.length === 0) {
-    noteListItems.push(createLi('No saved Notes', false));
+    noteListItems.push(createLi("Notes will be saved here", false));
   }
 
   jsonNotes.forEach((note) => {
@@ -169,7 +184,7 @@ const renderNoteList = async (notes) => {
 
 // Gets notes from the db and renders them to the sidebar
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
-
+console.log(`pathname: ${window.location.pathname}`);
 if (window.location.pathname === '/notes') {
   saveNoteBtn.addEventListener('click', handleNoteSave);
   newNoteBtn.addEventListener('click', handleNewNoteView);

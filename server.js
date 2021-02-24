@@ -5,7 +5,7 @@ const path = require("path");
 
 // Express Configuration //
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 5000;
 
 // Sets up the Express app to handle data parsing //
 app.use(express.urlencoded({ extended: true }));
@@ -35,9 +35,25 @@ fs.readFile("db/db.json","utf8", (error, data) => {
 
     // Deletes a note with a particular ID //
     app.delete("/api/notes/:id", (request, response) => {
-        notes.splice(request.params.id, 1);
-        updateDB();
-        return console.log("Deleting note ID: " + request.params.id);
+
+        console.log("Deleting note ID: " + request.params.id);
+      
+        if (notes.length === 1) {
+          notes = [];
+        } else {
+          const index = parseInt(request.params.id);
+
+          for (i=0; i<notes.length; i++) {
+
+            if(notes[i].id === index) {
+
+              notes.splice(i, 1);
+
+            }
+          }
+        };
+      updateDB();
+      return response.json({})
     })
       
     // Displays notes.html //
